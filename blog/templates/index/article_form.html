@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<head>
+
+</head>
+</head>
+<style>
+    
+
+   /* Additional styles for form container */
+   .form-container {
+       width: 500px;
+       height:1500px;
+       margin-left: 10px;
+   }
+
+   
+</style>
+
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							
+						<!-- Post -->
+                        <div class = "form-container container bg-white shadow-md p-5"> 
+                            <h3>Create your account</h3>
+                            <h5>Compose your Favorite Post Today</h5>
+                            <br>
+                            <form method="POST" autocomplete="off" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                <br>   
+                
+								<button type ="submit" id ="sub_btn" class="btn btn-sm" style ="width:150px; height: 50px;"> &nbsp; Post </button>
+                
+                            </form>
+							
+                        
+                    	</div>
+
+
+					</div>
+
+				<!-- Sidebar -->
+					<section id="sidebar">
+
+						<!-- Intro -->
+							<section id="intro">
+								<a href="#" class="logo"><img src="{% static 'images/logo.jpg' %}" alt="" /></a>
+								<header>
+									<h2>Future Imperfect</h2>
+									<p>Another fine responsive site template by <a href="http://html5up.net">HTML5 UP</a></p>
+								</header>
+							</section>
+
+						<!-- Mini Posts -->
+							<section>
+								<div class="mini-posts">
+
+									<!-- Mini Post -->
+										<article class="mini-post">
+											<header>
+												<h3><a href="single.html">Vitae sed condimentum</a></h3>
+												<time class="published" datetime="2015-10-20">October 20, 2015</time>
+												<a href="#" class="author"><img src="{% static 'images/avatar.jpg' %}" alt="" /></a>
+											</header>
+											<a href="single.html" class="image"><img src="{% static 'images/pic04.jpg' %}" alt="" /></a>
+										</article>
+								</div>
+							</section>
+
+						<!-- Posts List -->
+							<section>
+								<ul class="posts">
+									<li>
+										<article>
+											<header>
+												<h3><a href="single.html">Lorem ipsum fermentum ut nisl vitae</a></h3>
+												<time class="published" datetime="2015-10-20">October 20, 2015</time>
+											</header>
+											<a href="single.html" class="image"><img src="{% static 'images/pic08.jpg' %}" alt="" /></a>
+										</article>
+									</li>
+								</ul>
+							</section>
+
+						<!-- About -->
+							<section class="blurb">
+								<h2>About</h2>
+								<p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod amet placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at phasellus sed ultricies.</p>
+								<ul class="actions">
+									<li><a href="#" class="button">Learn More</a></li>
+								</ul>
+							</section>
+
+						<!-- Footer -->
+							<section id="footer">
+								<ul class="icons">
+									<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+									<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+									<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+									<li><a href="#" class="icon solid fa-rss"><span class="label">RSS</span></a></li>
+									<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+								</ul>
+								<p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>. Images: <a href="http://unsplash.com">Unsplash</a>.</p>
+							</section>
+
+					</section>
+
+			</div>
+
+	</body>
+</html>
+{% endblock %}

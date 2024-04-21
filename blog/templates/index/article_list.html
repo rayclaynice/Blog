@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+
+<style>
+
+			
+		.form-container {
+			width: 500px;
+			height:1500px;
+			margin-left: 10px;
+		}
+		.btn_update {
+			display: inline-block;
+			width: 150px;
+			height: 50px;
+			margin-right: 10px; /* Adjust margin between buttons */
+			border: 1px solid #e4dadb; /* Border color set to danger */
+			font-weight: bold;
+			padding: 0.25rem 0.5rem; /* Padding adjusted */
+			font-size: 0.8rem;
+			line-height: 1.5;
+			border-radius: 0.25rem;
+		}
+		.btn {
+			display: inline-block;
+			font-weight: bold;
+			color: #dc3545; /* Text color set to danger */
+			text-align: center;
+			vertical-align: middle;
+			user-select: none;
+			background-color: transparent; /* Transparent background */
+			border: 1px solid #e4dadb; /* Border color set to danger */
+			padding: 0.25rem 0.5rem; /* Padding adjusted */
+			font-size: 0.8rem;
+			line-height: 1.5;
+			border-radius: 0.25rem;
+			transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+			cursor: pointer;
+			text-decoration: none;
+		}
+
+		.btn:hover {
+			color: #fff;
+			background-color: #dc3545; /* Background color on hover set to danger */
+			border-color: #bd2130; /* Border color on hover set to danger */
+			text-decoration: none;
+		}
+
+		.btn:focus {
+			outline: 0;
+			box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);
+		}
+
+		.btn:active {
+			color: #fff;
+			background-color: #bd2130; /* Background color on active set to danger */
+			border-color: #b21f2d; /* Border color on active set to danger */
+		}
+		h3.view_posts {
+			font-weight: bold;
+			font-size: small;
+
+
+		}
+		.custom-heart {
+			background-color: gray; /* Set the background color */
+			padding: 0.2em; /* Adjust padding to control the size of the background */
+			border-radius: 50%; /* Make the background circular */
+			color: white; /* Set the color of the heart icon to white */
+	}
+
+		
+		.like-button.liked i.fa-heart {
+        color: red; 
+		}
+
+</style>
+
+
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+						{% for article in articles %}
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="{% url 'article-detail' article.id %}">{{article.title}}</a></h2>
+										<p>{{article.sub_title}}</p>
+									</div>
+									<div class="meta">
+										<time class="published" datetime="2015-11-01">{{article.date_posted|date:"F d, Y"}}</time>
+										<a href="{% url 'profile'%}" class="author"><span  style="font-weight: bold; margin-left: 30px;">{{ article.author.username }}</span><img src="{{article.author.profile.image.url}}" alt="" style="width: 45px; height: 45px; border-radius: 50%;"/></a>
+										<h3><a href="{% url 'user-article' article.author.username %}" class ="view_posts"> VIEW POSTS</a></h3>
+									</div>
+								</header>
+								<a href="#" class="image featured"><img src="{{ article.image.url}}" alt="" /></a>
+								<p>{{article.preview}}</p>
+								<footer>
+									<ul class="actions">
+										<li><a href="{% url 'article-detail' article.id %}" class="button large">Continue Reading</a></li>
+									</ul>
+									<ul class="stats">
+										<li><a href="">General</a></li>
+										<li>
+											<a href="#" class="like-button" data-article-id="{{ article.id }}">
+												<i class="fas fa-heart like-icon"></i> <!-- Heart icon -->
+												<span class="like-count">{{ article.likes.count }}</span> <!-- Like count -->
+											</a>
+										</li>
+										
+										
+										<li><a href="#" class="icon solid  toggle-comment"><i class="fas fa-comment"></i>{{ article.comments_set.count }}</a></li>
+										
+									</ul>
+								</footer>
+								{% include 'comment_form.html' %}
+							</article>
+							{% endfor %}
+
+							
+							
+						<!-- Pagination -->
+							<ul class="actions pagination">
+							{% if is_paginated %}
+								{% if page_obj.has_previous %}
+								<li><a href="?page=1" class="button medium previous">First</a></li>
+								<li><a href="?page={{page_obj.previous_page_number}}" class="button medium previous">Previous Page</a></li>
+								{% endif %}
+
+
+								{% for num in page_obj.paginator.page_range %}
+								  {% if page_obj.number == num %}
+								  <li><a href="?page={{num }}" class="button medium previous">{{num }}</a></li>
+								  {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+								  <li><a href="?page={{num }}" class="button medium previous">{{num }}</a></li>
+								{% endif %}
+								{% endfor %}
+
+								{% if page_obj.has_next %}
+								  <li><a href="?page={{page_obj.next_page_number}}" class="button medium previous">Next</a></li>
+								  <li><a href="?page={{ page_obj.paginator.num_pages }}" class="button medium previous">last</a></li>
+								  {% endif %}
+                           {% endif %}
+							</ul>
+							
+					</div>
+
+				<!-- Sidebar -->
+					<section id="sidebar">
+						<!-- Intro -->
+							<section id="intro">
+								<a href="#" class="logo"><img src="{% static 'images/aliens.jpg' %}" alt="" /></a>
+								<header>
+									<h2><a href="">COSMIC HUBOSPHERE</a></h2>
+									
+									<p>Your Portal to the  boundless realms of celestial exploration and artificial intelligence intergration. <a href="http://html5up.net"></a></p>
+								</header>
+							</section>
+
+						<!-- Mini Posts -->
+							<section>
+								<div class="mini-posts">
+
+									<!-- Mini Post -->
+									{% for mini_post in articles %}
+										<article class="mini-post">
+											
+											<header>
+												<h4><a href="single.html">{{ mini_post.title}}</a></h4>
+												<time class="published" datetime="2015-10-20">{{mini_post.date_posted|date:"F d, Y"}}</time>
+												<a href="#" class="author"><img src="{{mini_post.author.profile.image.url}}" alt="" style="width: 45px; height: 45px; border-radius: 50%;"/></a>
+											</header>
+											<a href="single.html" class="image"><img src="{{ mini_post.image.url}}" alt="" /></a>
+											{% endfor %}
+										</article>
+
+								</div>
+							</section>
+
+						<!-- Posts List -->
+							<section>
+								<ul class="posts">
+									{% for list in articles %}
+									<li>
+										<article>
+											<header>
+												<h3><a href="single.html">{{list.title}}</a></h3>
+												<time class="published" datetime="2015-10-20">{{list.date_posted|date:"F d, Y"}}</time>
+											</header>
+											<a href="single.html" class="image"><img src="{{ list.image.url}}" alt="" /></a>
+										</article>
+										{% endfor %}
+									</li>
+									
+								</ul>
+							</section>
+
+						<!-- About -->
+							<section class="blurb">
+								<h2>About</h2>
+								<p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod amet placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at phasellus sed ultricies.</p>
+								<ul class="actions">
+									<li><a href="#" class="button">Learn More</a></li>
+								</ul>
+							</section>
+
+						<!-- Footer -->
+							<section id="footer">
+								<ul class="icons">
+									<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+									<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+									<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+									<li><a href="#" class="icon solid fa-rss"><span class="label">RSS</span></a></li>
+									<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+								</ul>
+								<p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>. Images: <a href="http://unsplash.com">Unsplash</a>.</p>
+							</section>
+
+					</section>
+					
+			</div>
+			
+</body>
+{% endblock %}

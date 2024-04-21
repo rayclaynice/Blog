@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>COSMIC HUBOSPHERE</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'css/main.css' %}" />
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="{% url 'index' %}">COSMIC HUBOSPHERE</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="#">ABOUT</a></li>
+								<li><a href="#">EXPLORE</a></li>
+								<li><a href="#">AI intergration</a></li>
+								<li><a href="#">COMMUNITY</a></li>
+								<li><a href="#">CELESTIAL DISCOVERIES</a></li>
+								<li><a href="#">ADVERTISEMENTS</a></li>
+								<li><a href="#">SUBSCRIBE</a></li>
+								<li><a href="#">CONTACT US</a></li>
+								
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="search">
+									<a class="fa-search" href="#search">Search</a>
+									<form id="search" method="get" action="#">
+										<input type="text" name="query" placeholder="Search" />
+									</form>
+								</li>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+					<section id="menu">
+
+						<!-- Search -->
+							<section>
+								<form class="search" method="get" action="#">
+									<input type="text" name="query" placeholder="Search" />
+								</form>
+							</section>
+
+						<!-- Links -->
+							<section>
+								<ul class="links">
+									<li>
+										<a href="#">
+											<h3>Lorem ipsum</h3>
+											<p>Feugiat tempus veroeros dolor</p>
+										</a>
+									</li>
+									<li>
+										<a href="#">
+											<h3>Dolor sit amet</h3>
+											<p>Sed vitae justo condimentum</p>
+										</a>
+									</li>
+									<li>
+										<a href="#">
+											<h3>Feugiat veroeros</h3>
+											<p>Phasellus sed ultricies mi congue</p>
+										</a>
+									</li>
+									<li>
+										<a href="#">
+											<h3>Etiam sed consequat</h3>
+											<p>Porta lectus amet ultricies</p>
+										</a>
+									</li>
+								</ul>
+							</section>
+
+						<!-- Actions -->
+							<section>
+								{% if user.is_authenticated %}
+								<ul class="actions stacked">
+									<li><a href="{% url 'article-create' %}" class="button large fit">New Article</a></li>
+								</ul>
+								<ul class="actions stacked">
+									<li><a href="{% url 'profile' %}" class="button large fit">Profile</a></li>
+								</ul>
+								<form method="post" action="{% url 'logout' %}">
+									{% csrf_token %}
+									<ul class="actions stacked">
+										<li><button type="submit" class="button large fit">Logout</button></li>
+									</ul>
+								</form>
+								{% else %}
+								<ul class="actions stacked">
+									<li><a href="{% url 'register' %}" class="button large fit">Sign up</a></li>
+								</ul>
+								<ul class="actions stacked">
+									<li><a href="{% url 'login' %}" class="button large fit">Sign In</a></li>
+								</ul>
+								
+								{% endif %}
+							</section>
+
+					</section>
+
+{% block content %}
+
+
+
+{% endblock content %}
+
+<!-- Scripts -->
+<script>
+	window.csrfToken = "{{ csrf_token }}";
+</script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/browser.min.js' %}"></script>
+<script src="{% static 'js/breakpoints.min.js' %}"></script>
+<script src="{% static 'js/util.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/ajax.js' %}"></script>

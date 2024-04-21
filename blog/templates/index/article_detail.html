@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+		.button-container {
+			display: flex; /* Use flexbox to align buttons horizontally */
+			justify-content: space-between; /* Adjust spacing between buttons */
+		}
+		
+
+		.btn_update {
+			display: inline-block;
+			width: 100px;
+			height: 50px;
+			margin-left: 10px; /* Adjust margin between buttons */
+			border: 1px solid #e4dadb; /* Border color set to danger */
+			font-weight: bold;
+			padding: 0.4rem 1.0rem; /* Padding adjusted */
+            font-size: 0.8rem;
+            line-height: 2.5;
+            border-radius: 0.25rem;
+			text-align: center; /* Center align text */
+			vertical-align: middle;
+			user-select: none;
+			background-color: transparent; 
+			text-decoration: none;
+		}
+
+		.btn_delete {
+			display: inline-block;
+			font-weight: bold;
+			color: #dc3545; /* Text color set to danger */
+			text-align: center; /* Center align text */
+			vertical-align: middle;
+			user-select: none;
+			background-color: transparent; /* Transparent background */
+			border: 1px solid #e4dadb; /* Border color set to danger */
+			padding: 0.4rem 1.0rem; /* Padding adjusted */
+			font-size: 0.8rem;
+			line-height: 2.5;
+			border-radius: 0.25rem;
+			transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+			cursor: pointer;
+			text-decoration: none;
+			width: 100px;
+			height: 50px;
+			margin-left: 20px; /* Adjust margin between buttons */
+		}
+
+		.btn_delete:hover {
+			color: #fff;
+			background-color: #dc3545; /* Background color on hover set to danger */
+			border-color: #bd2130; /* Border color on hover set to danger */
+			text-decoration: none;
+		}
+
+		.btn_delete:focus {
+			outline: 0;
+			box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);
+		}
+
+		.btn_delete:active {
+			color: #fff;
+			background-color: #bd2130; /* Background color on active set to danger */
+			border-color: #b21f2d; /* Border color on active set to danger */
+		}
+		.btn_update:hover {
+			color: #fff;
+			background-color: #c3cfde; /* Background color on hover set to danger */
+			border-color: #4a6b82; /* Border color on hover set to danger */
+			text-decoration: none;
+		}
+		h3.view_posts {
+			font-weight: bold;
+			font-size: small;
+		}
+
+
+
+
+
+
+</style>
+
+
+		
+				
+	<!-- Main -->
+		<div id="main">
+				<article class="post">
+					<header>
+						<div class="title">
+							<h2><a href="#">{{object.title}}</a></h2>
+							<p>{{object.sub_title}}</p>
+						</div>
+						<div class="meta">
+							<time class="published" datetime="2015-11-01">{{object.date_posted|date:"F d, Y"}}</time>
+							<a href="{% url 'profile' %}" class="author"><span class="name">{{object.author}}</span><img src="{{object.author.profile.image.url}}" alt="" style="width: 45px; height: 45px; border-radius: 50%;" /></a>
+							<h3><a href="{% url 'user-article' article.author.username %}" class ="view_post"> VIEW POSTS</a></h3>
+							{% if object.author == user %}
+							<div class = "button-container">
+							<a type="submit" class="btn btn_update" href="{% url 'article-update' object.id %}" style="width: 150px; height: 50px;"> &nbsp;Update</a>
+							<a type="submit"  class=" btn btn_delete" href ="{% url 'article-delete' object.id %}" style="width: 150px; height: 50px;"> &nbsp;Delete</a>
+							</div>
+							{% endif %}
+						</div>
+					</header>
+					<span class="image featured"><img src="{{object.image.url}}" alt="" /></span>
+					<p>{{object.content}}</p>
+					<p></p>
+					<footer>
+						<ul class="stats">
+							<li><a href="#">General</a></li>
+							<li><a href="#" class="icon solid fa-heart">28</a></li>
+							<li><a href="#" class="icon solid fa-comment">128</a></li>
+						</ul>
+						
+					</footer>
+					
+				</article>	
+		</div>
+			
+    {% endblock %}

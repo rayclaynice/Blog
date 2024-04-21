@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Detail</title>
+    <style>
+        .comment {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .comment .author {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .comment .author img {
+            width: 50px; /* Adjust the size of the author image */
+            height: 50px; /* Adjust the size of the author image */
+            border-radius: 50%; /* Make the author image round */
+        }
+        .comment .comment-text {
+            flex: 1; /* Take remaining space */
+        }
+        .comment .date {
+            color: #666;
+            font-size: 0.8em;
+        }
+        #id_image {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="comment-section" style="display: none;">
+        <h3>Leave a Comment</h3>
+        <form id="comment-form" method="post" action="{% url 'article_comment' article.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <textarea id="id_body" name="c_ment" rows="3" cols="20" required></textarea><br>
+            <input type="submit" value="comment" class="button primary small">
+        </form>
+        {% include 'comment_listing.html' %}
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<!-- Post -->
+{% for article in articles %}
+<article class="post">
+	<header>
+		<div class="title">
+			<h2><a href="{% url 'article-detail' article.id %}">{{article.title}}</a></h2>
+			<p>{{article.sub_title}}</p>
+		</div>
+		<div class="meta">
+			<time class="published" datetime="2015-11-01">{{article.date_posted|date:"F d, Y"}}</time>
+			<a href="{% url 'profile'%}" class="author"><span  style="font-weight: bold; margin-left: 30px;">{{ article.author.username }}</span><img src="{{article.author.profile.image.url}}" alt="" style="width: 45px; height: 45px; border-radius: 50%;"/></a>
+			<h3><a href="{% url 'user-article' article.author.username %}" class ="view_posts"> VIEW POSTS</a></h3>
+		</div>
+	</header>
+	<a href="single.html" class="image featured"><img src="{{ article.image.url}}" alt="" /></a>
+	<p>{{article.preview}}</p>
+	<footer>
+		<ul class="actions">
+			<li><a href="{% url 'article-detail' article.id %}" class="button large">Continue Reading</a></li>
+		</ul>
+		<ul class="stats">
+			<li><a href="">General</a></li>
+			<li><a href="#" class="icon solid fa-heart ">28</a></li>
+			<li><a href="#" class="icon solid fa-comment toggle-comment">128</a></li>
+		</ul>
+	</footer>
+	<div class="comment-section" style="display: none;">
+		<h3>Leave a Comment</h3>
+		<form  id="comment-form" method="post">
+			{% csrf_token %}
+			{{ form }}
+			<br>
+			<input type="submit" value="Submit" class="button primary small">
+		</form>
+	</div>
+</article>
+
+{% endfor %}
+
+{% endblock %}
