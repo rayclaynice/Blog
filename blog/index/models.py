@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.timesince import timesince
 from django.contrib.auth.models import User
 from PIL import Image
 from django.urls import reverse
@@ -17,6 +18,7 @@ class Article(models.Model):
     author = models.ForeignKey(User, on_delete = models.CASCADE)
     image = ResizedImageField(size=[1000,400 ], crop=['middle', 'center'], default='profile_pics/profile-picture.jpg', upload_to='article_images/')
     likes_count = models.IntegerField(default=0) 
+    comment_count = models.IntegerField(default=0) 
 
 
     def __str__(self):
@@ -34,8 +36,11 @@ class Comments(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     c_ment = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
+    comment_likes_count = models.IntegerField(default=0) 
 
 
+    def time_since_created(self):
+        return timesince(self.created_at)
 
 
     def __str__(self):
@@ -61,3 +66,22 @@ class Like(models.Model):
     def total_likes(self):
         return self.likes.count()
 
+
+class comment_likes(models.Model):
+    comment = models.ForeignKey(Comments, related_name='comment_likes', on_delete=models.CASCADE, default =1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.comment.likes_count = self.comment.comment_likes.count()
+        self.comment.save()
+
+    def delete(self, *args, **kwargs):
+        comment = self.comment
+        super().delete(*args, **kwargs)
+        comment.likes_count = comment.likes.count()
+        comment.save()
+
+    @property
+    def total_likes(self):
+        return self.comments_likes.count()

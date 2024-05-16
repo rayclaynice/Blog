@@ -506,3 +506,42 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			</div>
 	</body>
 {% endblock %}
+
+
+//jquery to handle commenting
+        jQuery(document).ready(function() {
+            // Event listener for form submission
+            jQuery('#comment-form').on('submit', function(event) {
+                // Prevent the default form submission behavior
+                event.preventDefault();
+        
+                // Serialize form data
+                var formData = jQuery(this).serialize();
+                var $form = jQuery(this);
+        
+                // Submit the form using AJAX
+                jQuery.ajax({
+                    url: jQuery(this).attr('action'),
+                    method: jQuery(this).attr('method'), 
+                    data: formData, 
+                    success: function(response) {
+                        if (response.success) {
+                            // Clear the form inputs
+                            $form.find('textarea').val('');
+        
+                            var $commentSection = $form.closest('.post').find('.comment-section');
+                            jQuery('html, body').animate({
+                                scrollTop: $commentSection.offset().top
+                            }, 1000); // Adjust scroll speed as needed
+                        } else {
+                            // Handle form errors or other failure scenarios
+                            console.error('Form submission failed:', response.errors);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors if needed
+                        console.error('There was a problem with the AJAX request:', error);
+                    }
+                });
+            });
+        });

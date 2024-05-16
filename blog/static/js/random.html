@@ -1,0 +1,169 @@
+ commentsHtml = `
+    <div class="container_c" data-article-id="${articleId}">
+        <div class="comment__container opened" id="first-comment">
+            <div class="comment__card">
+                <div class="p-2">
+                    <span class="round"><img src="${comment.author_image_url}" alt="user" style="width: 45px; height: 45px; border-radius: 50%;"></span>
+                </div>
+                <h3 class="comment__title">${comment.author}</h3>
+                <p>${comment.c_ment}</p>
+                <div class="custom-confirm" data-comment-id="${comment.id}" style="display: none;">
+                    <div class="modal-content">
+                        <p><strong>Delete</strong><br>Are you sure that you want to delete this comment?</p>
+                        <div class="buttons">
+                            <button class="confirm-delete">Delete</button>
+                            <button class="cancel-delete">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment__card-footer">
+                    <div>
+                        <a href="#" class="comment-likes" data-comment-id="${comment.id}">
+                            <i class="fas fa-heart like-icon"></i> 
+                            <span class="like-icons">${comment.comment_likes_count}</span> 
+                        </a>   
+                    </div>
+                    <div>
+                    ${showDeleteAction ? `<a href="#" class="delete-comment" data-comment-id="${comment.id}"><i class="fa fa-trash trash-icon"></i></a>` : ''} 
+                    </div>
+                    <div class="show-replies">Reply 2</div>
+                    <span class="date">${comment.created_at}</span>
+                </div>
+            </div>
+        </div>
+        <div class="custom-confirm" data-comment-id="${comment.id}" style="display: none;">
+            <div class="modal-content">
+                <p><strong>Delete</strong><br>Are you sure that you want to delete this comment?</p>
+                <div class="buttons">
+                    <button class="confirm-delete">Delete</button>
+                    <button class="cancel-delete">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+
+    
+    var commentHtml = `
+    <div class="container_c" data-article-id="${articleId}">
+        <div class="comment__container opened" id="first-comment">
+            <div class="comment__card">
+                <div class="p-2">
+                    <span class="round"><img src="${comment.author_image_url}" alt="user" style="width: 45px; height: 45px; border-radius: 50%;"></span>
+                </div>
+                <h3 class="comment__title">${comment.author}</h3>
+                <p>${comment.c_ment}</p>
+            </div>
+            <div class="comment__card-footer">
+                <div>
+                    <a href="#" class="comment-likes" data-comment-id="${comment.id}">
+                        <i class="fas fa-heart like-icon"></i>
+                        <span class="like-icons">${comment.comment_likes_count}</span>
+                    </a>
+                </div>
+                <div>
+                ${showDeleteAction ? `<a href="#" class="delete-comment" data-comment-id="${comment.id}"><i class="fa fa-trash trash-icon"></i></a>` : ''} 
+                </div>
+                <div class="show-replies">Reply 2</div>
+                <span class="date">${comment.created_at}</span>
+            </div>
+        </div>
+        ${deleteConfirmationTemplate}
+    </div>`;
+
+
+
+commentsHtml = `
+<div class="container_c" data-article-id="${articleId}">
+<div class="comment__container opened" id="first-comment">
+<div class="comment__card">
+    <div class="p-2">
+        <span class="round"><img src="${comment.author_image_url}" alt="user" style="width: 45px; height: 45px; border-radius: 50%;"></span>
+    </div>
+    <h3 class="comment__title">${comment.author}</h3>
+    <p>${comment.c_ment}</p>
+    <div class="custom-confirm" data-comment-id="${comment.id}" style="display: none;">
+        <div class="modal-content">
+            <p><strong>Delete</strong><br>Are you sure that you want to delete this comment?</p>
+            <div class="buttons">
+                <button class="confirm-delete">Delete</button>
+                <button class="cancel-delete">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div class="comment__card-footer">
+        <div>
+            <a href="#" class="comment-likes" data-comment-id="${comment.id}">
+                <i class="fas fa-heart like-icon"></i> 
+                <span class="like-icons">${comment.comment_likes_count}</span> 
+            </a>   
+        </div>
+        <div>
+        ${showDeleteAction ? `<a href="#" class="delete-comment" data-comment-id="${comment.id}"><i class="fa fa-trash trash-icon"></i></a>` : ''} 
+        </div>
+        <div class="show-replies">Reply 2</div>
+        <span class="date">${comment.created_at}</span>
+    </div>
+</div>
+</div>
+<div class="custom-confirm" data-comment-id="${comment.id}" style="display: none;">
+<div class="modal-content">
+    <p><strong>Delete</strong><br>Are you sure that you want to delete this comment?</p>
+    <div class="buttons">
+        <button class="confirm-delete">Delete</button>
+        <button class="cancel-delete">Cancel</button>
+    </div>
+</div>
+</div>
+</div>`;
+
+
+<div
+class="reply__container"
+dataset="first-comment"
+id="first-reply"
+>
+<div class="comment__card">
+  <h3 class="comment__title">The first reply</h3>
+  <p>
+   reply1
+  </p>
+  <div class="comment__card-footer">
+    <div>Likes 123 </div>
+    <div>Dislikes 23</div>
+    <div class="show-replies">Reply 1</div>
+  </div>
+</div>
+<div
+  class="reply__container"
+  dataset="first-reply"
+  id="first-first-reply"
+>
+  <div class="reply__card">
+    <h3 class="comment__title">The first reply to the first reply</h3>
+    <p>
+      reply2
+    </p>
+    <div class="comment__card-footer">
+      <div>Likes 123</div>
+      <div>Dislikes 23</div>
+      <div class="show-replies">Reply 1</div>
+    </div>
+  </div>
+  <div class="reply__container" dataset="first-first-reply">
+    <div class="reply__card">
+      <h3 class="comment__title">
+        The first reply to the first reply to the first reply
+      </h3>
+      <p>
+        reply3
+      </p>
+      <div class="comment__card-footer">
+        <div>Likes 123</div>
+        <div>Dislikes 23</div>
+        <div class="show-replies">Reply 0</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -34,15 +34,19 @@
     </style>
 </head>
 <body>
+    
     <div class="comment-section" style="display: none;">
         <h3>Leave a Comment</h3>
-        <form id="comment-form" method="post" action="{% url 'article_comment' article.id %}" enctype="multipart/form-data">
+        <form class="comment-form" method="post" action="{% url 'article_comment' article.id %}">
             {% csrf_token %}
-            <textarea id="id_body" name="c_ment" rows="3" cols="20" required></textarea><br>
+            {{form.as_p}}
+            <textarea  name="c_ment" rows="3" cols="20" required></textarea><br>
             <input type="submit" value="comment" class="button primary small">
         </form>
         {% include 'comment_listing.html' %}
+        
     </div>
+    
     
 </body>
 </html>
