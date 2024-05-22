@@ -1,9 +1,15 @@
 from django.shortcuts import render,get_object_or_404, redirect
+from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Article, Comments, Like, comment_likes
-from .forms import CommentForm
+from .models import (Article,
+                    Comments,
+                    Like, 
+                    comment_likes,
+                    Reply,)
+
+from .forms import CommentForm, ReplyForm
 from django.db.models import Prefetch
 from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
@@ -22,49 +28,6 @@ from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         UserPassesTestMixin,
                                         )
 from django.utils.timesince import timesince
-
-
-
-
-
-'''
-class ArticleListView(ListView):
-    model = Article
-    template_name = 'article_list.html'
-    context_object_name = 'articles'
-    ordering = ['-date_posted']
-    paginate_by = 2
-
-
-    def get_queryset(self):
-
-        queryset = super().get_queryset().prefetch_related(
-            Prefetch('comments_set', queryset=Comments.objects.order_by('-created_at'), to_attr='article_comments')
-        )
-
-        return queryset
-    
-    def paginate_comments(self, comments, page_number, per_page):
-        paginator = Paginator(comments, per_page)
-        try:
-            paginated_comments = paginator.page(page_number)
-        except PageNotAnInteger:
-            paginated_comments = paginator.page(1)
-        except EmptyPage:
-            paginated_comments = paginator.page(paginator.num_pages)
-        return paginated_comments
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        for article in context['articles']:
-            article.page_number = self.request.GET.get('page_' + str(article.pk), 1)
-            article.paginated_comments = self.paginate_comments(article.comments_set.all(), article.page_number, 3) 
-        return context
-
-'''
-
-
-
 
 
 
@@ -173,7 +136,32 @@ class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin,DeleteView):
 
 
 
-@login_required
+def login_required_ajax(function=None,redirect_field_name=None):
+    """
+    Just make sure the user is authenticated to access a certain ajax view
+
+    Otherwise return a HttpResponse 401 - authentication required
+    instead of the 302 redirect of the original Django decorator
+    """
+    def _decorator(view_func):
+        def _wrapped_view(request, *args, **kwargs):
+            if request.user.is_authenticated:
+                return view_func(request, *args, **kwargs)
+            else:
+                login_url = reverse('login')  # Assuming you have a named URL pattern for the login page
+                return JsonResponse({'error': 'Authentication required', 'redirect_url': login_url}, status=401)
+        return _wrapped_view
+
+    if function is None:
+        return _decorator
+    else:
+        return _decorator(function)
+
+
+
+
+
+@login_required_ajax
 def comment_view(request, pk):
     article = get_object_or_404(Article, pk=pk)
     comments = Comments.objects.filter(post=article)
@@ -183,7 +171,13 @@ def comment_view(request, pk):
         if form.is_valid():
             comment = form.save(commit=False)
             comment.post = article
-            comment.author = request.user
+            # Ensure that comment author is set only if the user is authenticated
+            if isinstance(request.user, User):
+                comment.author = request.user
+            else:
+                # Handle the case where the user is not authenticated
+                # For example, you could set the author to None or handle it differently based on your requirements
+                comment.author = None  # Or any other appropriate handling
             comment.save()
             return JsonResponse({'success': True, 'message': 'Comment submitted successfully'}) 
             #eturn redirect('index') 
@@ -192,8 +186,9 @@ def comment_view(request, pk):
 
 
 
+
         
-@login_required
+@login_required_ajax
 def like_post(request, pk):
     article = get_object_or_404(Article, pk=pk)
     
@@ -226,7 +221,7 @@ def get_like_count(request, pk):
     return JsonResponse({'likes_count': likes_count})
 
 
-@login_required
+@login_required_ajax
 def like_comment(request, pk):
     comment = get_object_or_404(Comments, pk=pk)
     
@@ -270,7 +265,7 @@ def get_comment_count(request, pk):
 
 
 
-
+@login_required_ajax
 def update_comments(request, pk):
     # Retrieve the article instance using its primary key (pk)
     article = get_object_or_404(Article, pk=pk)
@@ -317,6 +312,60 @@ def update_comments(request, pk):
         'num_pages': paginator.num_pages,
 
     })
+
+
+
+
+@login_required
+def reply_view(request, comment_id):
+    comment = get_object_or_404(Comments, pk=comment_id)
+    replies = Reply.objects.filter(replies=comment).order_by('created_at')
+
+    # Handling reply submission
+    if request.method == 'POST':
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.replies = comment
+            reply.user = request.user
+            reply.save()
+            return JsonResponse({'success': True, 'message': 'Reply submitted successfully'}) 
+
+    # Handling reply retrieval and pagination
+    paginator = Paginator(replies, 3)  
+    page_number = request.GET.get('page')
+
+    try:
+        replies = paginator.page(page_number)
+    except PageNotAnInteger:
+        replies = paginator.page(1)
+    except EmptyPage:
+        replies = paginator.page(paginator.num_pages)
+
+    replies_data = []
+    for reply in replies:
+        reply_data = {
+            'id': reply.pk,
+            'author': reply.user.username,
+            'reply_text': reply.reply_text,
+            'created_at': timesince(reply.created_at.strftime('%Y-%m-%d %H:%M:%S')),  
+            # Add any other fields you want to include
+        }
+        replies_data.append(reply_data)
+
+    return JsonResponse({
+        'replies': replies_data,
+        'has_next': replies.has_next(),
+        'has_previous': replies.has_previous(),
+        'page_number': replies.number,
+        'num_pages': paginator.num_pages,
+    })
+
+
+
+
+
+
 
 
 @login_required

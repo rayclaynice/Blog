@@ -8,183 +8,204 @@
 </head>
 </head>
 <style>
-    
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
 
-   /* Additional styles for form container */
-   .form-container {
-       width: 500px;
-       height:1500px;
-       margin-left: 10px;
-   }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #003738; /* Light background for better contrast */
+    padding: 15px;
+}
+
+.container {
+    position: relative;
+    max-width: 1200px;
+    width: 100%;
+    border-radius: 6px;
+    padding: 30px;
+    background-color: #004E4F;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    margin-left: 200px;
+}
+
+.container header {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.container form {
+    background-color: #004E4F;
+}
+
+.form .title {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #D3D3D3;
+}
+
+.form .fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Adds space between fields */
+}
+
+.textinput.form-control {
+    color: #fff;
+    border-color: #ccc; /* Optional: change the border color */
+}
+
+.textinput.form-control::placeholder {
+    color: #fff; /* Change this to your desired placeholder text color */
+}
+
+
+.input-field {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.input-field label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #D3D3D3;
+    margin-bottom: 5px;
+}
+
+.input-field input, .input-field select {
+    outline: none;
+    font-size: 14px;
+    font-weight: 400;
+    color: #fff;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    padding: 10px;
+    background: #004E4F;
+}
+
+.input-field input:focus, .input-field select:focus {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.13);
+}
+
+.input-field select, .input-field input[type="date"] {
+    color: #707070;
+}
+
+.input-field input[type="date"]:valid {
+    color: #fff;
+}
+
+.text-muted {
+    color: #c9d3dc;
+    font-size: 12px;
+    line-height: 1.2em;
+    margin-top: 5px;
+}
+
+button[type="submit"] {
+    width: 150px;
+    height: 50px;
+    background-color: inherit;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+button[type="submit"]:hover {
+    background-color: #004E4F;
+}
+
+@media (max-width: 750px) {
+    .form .fields .input-field {
+        width: calc(100% / 2 - 15px);
+    }
+}
+
+@media (max-width: 550px) {
+    .form .fields .input-field {
+        width: 100%;
+    }
+}
+
 
    
 </style>
 
 
 				<!-- Main -->
-					<div id="main">
+<div id="main">
 
-						<!-- Post -->
-							
-						<!-- Post -->
-                        <div class = "form-container container bg-white shadow-md p-5"> 
-                            <h3>Create your account</h3>
-                            <h5>Compose your Favorite Post Today</h5>
-                            <br>
-                            <form id ="registration-form" method="POST" autocomplete="off">
-                                {% csrf_token %}
-                                {{ form.first_name|as_crispy_field }}
-                                <br>
-                                {{ form.last_name|as_crispy_field }}
-                                <br>
-                                {{ form.username|as_crispy_field }}
-                                <br>
-                                {{ form.email|as_crispy_field }}
-                                <br>
-                                {{ form.password1|as_crispy_field }}
-                                <!-- Display error messages for password1 field -->
-                                {% for error in form.password1.errors %}
-                                    <div class="alert alert-danger" role="alert">
-                                        {{ error }}
-                                    </div>
-                                {% endfor %}
-                                <br>
-                                {{ form.password2|as_crispy_field }}
-                                <br><br>    
-                
-								<button type ="submit" id ="sub_btn" class="btn btn-sm" style ="width:150px; height: 50px;"> &nbsp; Sign Up </button>
-                
-                            </form>
-							<div class=""border-top pt-3">
-                                <small class="text-muted">
-                                    Already have an account? <a class="ml-2" href="{% url 'login' %}"> Sign In</a>
-                                </small>
-                            
+    <div class="container">
+        <header>Create your account</header>
+        <form id="registration-form" method="POST" autocomplete="OFF" action="{% url 'register' %}">
+            {% csrf_token %}
+            <div class="form first">
+                <div class="details personal">
+                    <span class="title">Personal Details</span>
+                    <div class="fields">
+                        <div class="input-field">
+                            {{ form.username|as_crispy_field }}
+                            {% for error in form.username.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
                             </div>
-							
+                            {% endfor %}
+                        </div>
+                        <div class="input-field">
+                            {{ form.first_name|as_crispy_field }}
+                        </div>
+                        <div class="input-field">
+                            {{ form.last_name|as_crispy_field }}
+                        </div>
+                        <div class="input-field">
+                            {{ form.email|as_crispy_field }}
+                        </div>
+                        <div class="input-field">
+                            {{ form.phone_number|as_crispy_field }}
+                        </div>
                         
-                    	</div>
-
-
-					</div>
-
-				<!-- Sidebar -->
-					<section id="sidebar">
-
-						<!-- Intro -->
-							<section id="intro">
-								<a href="#" class="logo"><img src="{% static 'images/logo.jpg' %}" alt="" /></a>
-								<header>
-									<h2>Future Imperfect</h2>
-									<p>Another fine responsive site template by <a href="http://html5up.net">HTML5 UP</a></p>
-								</header>
-							</section>
-
-						<!-- Mini Posts -->
-							<section>
-								<div class="mini-posts">
-
-									<!-- Mini Post -->
-										<article class="mini-post">
-											<header>
-												<h3><a href="single.html">Vitae sed condimentum</a></h3>
-												<time class="published" datetime="2015-10-20">October 20, 2015</time>
-												<a href="#" class="author"><img src="{% static 'images/avatar.jpg' %}" alt="" /></a>
-											</header>
-											<a href="single.html" class="image"><img src="{% static 'images/pic04.jpg' %}" alt="" /></a>
-										</article>
-								</div>
-							</section>
-
-						<!-- Posts List -->
-							<section>
-								<ul class="posts">
-									<li>
-										<article>
-											<header>
-												<h3><a href="single.html">Lorem ipsum fermentum ut nisl vitae</a></h3>
-												<time class="published" datetime="2015-10-20">October 20, 2015</time>
-											</header>
-											<a href="single.html" class="image"><img src="{% static 'images/pic08.jpg' %}" alt="" /></a>
-										</article>
-									</li>
-								</ul>
-							</section>
-
-						<!-- About -->
-							<section class="blurb">
-								<h2>About</h2>
-								<p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod amet placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at phasellus sed ultricies.</p>
-								<ul class="actions">
-									<li><a href="#" class="button">Learn More</a></li>
-								</ul>
-							</section>
-
-						<!-- Footer -->
-							<section id="footer">
-								<ul class="icons">
-									<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-									<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-									<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-									<li><a href="#" class="icon solid fa-rss"><span class="label">RSS</span></a></li>
-									<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-								</ul>
-								<p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>. Images: <a href="http://unsplash.com">Unsplash</a>.</p>
-							</section>
-
-					</section>
-
-			</div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function(){
-        $('#registration-form').on('submit', function(e){
-            e.preventDefault();
-            var formdata = {
-                'first_name': $('#id_first_name').val(),
-                'last_name': $('#id_last_name').val(),
-                'username': $('#id_username').val(),
-                'email': $('#id_email').val(),
-                'password1': $('#id_password1').val(),
-                'password2': $('#id_password2').val(),
-                'csrfmiddlewaretoken': "{{ csrf_token }}",
-            };
-            $.ajax({
-                type: 'POST',
-                url: '{% url "register" %}',
-                data: formdata,
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-						window.location.href = '{% url "email-verification-sent" %}';
-                    } else {
-                        alert('Registration failed, please check your input');
-                    }
-                },
-                error: function(xhr, errmsg, err) {
-                    console.log(errmsg);
-                    // Optionally provide feedback to the user about the error
-                    alert('An error occurred while processing your request. Please try again later.');
-                }
-            });
-        });
-    });
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-			</script>
-
+                        <div class="input-field">
+                            {{ form.date_of_birth|as_crispy_field }}
+                        </div>
+                        <div class="input-field">
+                            {{ form.gender|as_crispy_field }}
+                        </div>
+                        <div class="input-field">
+                            {{ form.password1|as_crispy_field }}
+                            {% for error in form.password1.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="input-field">
+                            {{ form.password2|as_crispy_field }}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-sm">Sign Up</button>
+                </div>       
+            </div>
+        </form>
+    </div>
+</div>
 	</body>
 
 {% endblock %}

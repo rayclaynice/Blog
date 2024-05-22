@@ -39,12 +39,10 @@ def register(request):
             messages.success(request, f'Acount created for {username}!')
 
             return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
-
     context = {"form": form}
 
     return render(request, 'register.html', context)
+
 
 
 def email_verification(request, uidb64, token):

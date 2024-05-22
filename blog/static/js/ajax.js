@@ -32,6 +32,7 @@ function updateComments(articleId, currentPage = 1, totalPages = 1) {
         cache: false,
         dataType: 'json',
         success: function(data) {
+            
             var current_user = data.current_user;
             var commentsSection = jQuery('.comment-widgets[data-article-id="' + articleId + '"]');
             jQuery.each(data.comments, function(index, comment) {
@@ -87,8 +88,15 @@ function updateComments(articleId, currentPage = 1, totalPages = 1) {
             });
         },
         error: function(xhr, textStatus, errorThrown) {
-            console.log("Error:", errorThrown);
-            // Handle error if necessary
+            console.log("XHR Status:", xhr.status);
+            console.log("XHR Response Text:", xhr.responseText);
+            if (xhr.status === 0 || xhr.status === 401 || xhr.responseText.includes('<title>Login</title>')) {
+                // Redirect to login page
+                window.location.href = '/login/?next=' + encodeURIComponent(window.location.pathname);
+            } else {
+                console.log("Error:", errorThrown);
+                // Handle other errors if necessary
+            }
         }
     });
 }
@@ -202,149 +210,7 @@ jQuery(document).ready(function() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-        
-        $(document).ready(function() {
-            // Show confirmation dialog when delete icon is clicked for a specific comment
-            $(document).on('click', '.delete-comment', function(event) {
-                event.preventDefault();
-                var $clickedComment = $(this).closest('.comment-row'); // Find the closest comment row
-                var commentId = $(this).data('comment-id');
-                var $confirmationDialog = $clickedComment.find('.custom-confirm[data-comment-id="' + commentId + '"]');
-        
-                // Show confirmation dialog only for this comment
-                $confirmationDialog.show();
-            });
-        
-            // Handle delete action when confirm button is clicked
-            $(document).on('click', '.confirm-delete', function(event) {
-                event.preventDefault();
-                var $clickedComment = $(this).closest('.comment-row'); 
-                var commentId = $clickedComment.find('.delete-comment').data('comment-id'); // Find the comment ID within the clicked comment
-                var articleId = $('.comment-widgets').data('article-id'); // Find the article ID within the comments section
-                var currentPage = parseInt($('.buttonload[data-article-id="' + articleId + '"]').data('current-page'));
-                var commentsSection = $('.comment-widgets[data-article-id="' + articleId + '"]');
-                console.log('currrrr', currentPage)
-        
-                $.ajax({
-                    type: 'POST',
-                    url: '/delete_comments/' + commentId + '/',
-                    dataType: 'json',
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader("X-CSRFToken", window.csrfToken);
-                    },
-                    success: function(response) {
-                        $clickedComment.remove();
-                        for (var i = 1; i <= currentPage; i++) {
-                            updateComments(articleId, i);
-                        }
-                        updateCommentCount(articleId);
-                        console.log(response.message);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                    }
-                });
-        
-                // Hide confirmation dialog after action
-                $clickedComment.find('.custom-confirm').hide(); // Find the confirmation dialog within the clicked comment and hide it
-            });
-        
-            // Hide confirmation dialog when cancel button is clicked
-            $(document).on('click', '.cancel-delete', function(event) {
-                event.preventDefault();
-                var $clickedComment = $(this).closest('.comment-row'); // Find the closest comment row
-                $clickedComment.find('.custom-confirm').hide(); // Find the confirmation dialog within the clicked comment and hide it
-            });
-        });
-      */  
-
-/*
-        $(document).ready(function() {
-            // Show confirmation dialog when delete icon is clicked for a specific comment
-            $(document).on('click', '.delete-comment', function(event) {
-                event.preventDefault();
-                var $clickedComment = $(this).closest('.comment-widgets'); // Find the closest comment row
-                var commentId = $(this).data('comment-id');
-                var $confirmationDialog = $clickedComment.find('.custom-confirm[data-comment-id="' + commentId + '"]');
-        
-                // Show confirmation dialog only for this comment
-                $confirmationDialog.show();
-            });
-        
-            // Handle delete action when confirm button is clicked
-            $(document).on('click', '.confirm-delete', function(event) {
-                event.preventDefault();
-                var $clickedComment = $(this).closest('.comment-widgets'); 
-                var commentId = $clickedComment.find('.delete-comment').data('comment-id'); // Find the comment ID within the clicked comment
-                var articleId = $clickedComment.closest('.comment-widgets').data('article-id'); // Find the article ID within the comments section
-                var commentsSection = $('.comment-widgets[data-article-id="' + articleId + '"]');
-                var currentPage = parseInt($('.buttonload[data-article-id="' + articleId + '"]').data('current-page'));
-                console.log('currrrr', currentPage)
-        
-                $.ajax({
-                    type: 'POST',
-                    url: '/delete_comments/' + commentId + '/',
-                    dataType: 'json',
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader("X-CSRFToken", window.csrfToken);
-                    },
-                    success: function(response) {
-                        commentsSection.empty();
-                        for (var i = 1; i <= currentPage; i++) {
-                            updateComments(articleId, i);
-                        }
-                        updateCommentCount(articleId);
-                        console.log(response.message);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                    }
-                });
-        
-                // Hide confirmation dialog after action
-                $clickedComment.find('.custom-confirm').hide(); // Find the confirmation dialog within the clicked comment and hide it
-            });
-        
-            // Hide confirmation dialog when cancel button is clicked
-            $(document).on('click', '.cancel-delete', function(event) {
-                event.preventDefault();
-                var $clickedComment = $(this).closest('.comment-widgets'); // Find the closest comment row
-                $clickedComment.find('.custom-confirm').hide(); // Find the confirmation dialog within the clicked comment and hide it
-            });
-        });
-        
-        
-*/
-        
+       
         // jquery ajax to handle comment submission for form submission
         jQuery('.comment-form').on('submit', function(event) {
             event.preventDefault();
@@ -358,7 +224,12 @@ jQuery(document).ready(function() {
                 method: jQuery(this).attr('method'), 
                 data: formData, 
                 success: function(response) {
-                    if (response.success) {
+                    if (response.redirect_url) {
+                        // Perform client-side redirection to the login page
+                        window.location.href = response.redirect_url;
+                    }
+                    else if (response.success) {
+                        
                         // Clear the form inputs
                         $form.find('textarea').val('');
                         var articleId = $form.closest('.post').find('.icon.solid.toggle-comment').data('article-id');
@@ -378,13 +249,25 @@ jQuery(document).ready(function() {
                     }
                 },
                 error: function(xhr, status, error) {
-                    // Handle errors if needed
+                    if (xhr.status === 401) {
+                        // Perform client-side redirection to the login page
+                        window.location.href = '/login/';  // Update with your login page URL
+                    }
+                    else {
                     console.error('There was a problem with the AJAX request:', error);
+                    }
                 }
             });
         });
     });
     
+
+
+    
+
+
+
+
 
     jQuery(document).ready(function() {
         // Function to update the like count
@@ -425,6 +308,11 @@ jQuery(document).ready(function() {
                         xhr.setRequestHeader("X-CSRFToken", window.csrfToken);
                     },
                     success: function(data) {
+                        if (data.error) {
+                            // Handle authentication required error
+                            window.location.href = '/login/';
+                        }
+                        else {
                         if (data.liked) {
                             button.addClass('liked');
                             localStorage.setItem('liked_' + articleId, true);
@@ -434,9 +322,16 @@ jQuery(document).ready(function() {
                         }
                         // Update the like count after the action is completed
                         updateLikeCount(articleId);
-                    },
+                    }
+                },
                     error: function(xhr, textStatus, errorThrown) {
-                        console.log("Error:", errorThrown);
+                        if (xhr.status === 401) {
+                            // Perform client-side redirection to the login page
+                            window.location.href = '/login/';  // Update with your login page URL
+                        }
+                        else {
+                            console.error('There was a problem with the AJAX request:', error);
+                            }
                     }
                 });
                 
@@ -494,6 +389,11 @@ jQuery(document).on('click', '.comment-likes', function(event) {
             xhr.setRequestHeader("X-CSRFToken", window.csrfToken);
         },
         success: function(data) {
+            if (data.error) {
+                // Handle authentication required error
+                window.location.href = '/login/';
+            }
+            else {
             if (data.liked) {
                 button.addClass('liked');
                 localStorage.setItem('liked_' + commentId, true);
@@ -503,9 +403,16 @@ jQuery(document).on('click', '.comment-likes', function(event) {
             }
             // Update the like count after the action is completed
             updateCommentLikeCount(commentId);
+        }
         },
         error: function(xhr, textStatus, errorThrown) {
-            console.log("Error:", errorThrown);
+            if (xhr.status === 401) {
+                // Perform client-side redirection to the login page
+                window.location.href = '/login/';  // Update with your login page URL
+            }
+            else {
+                console.error('There was a problem with the AJAX request:', error);
+                }
         }
     });
 });
@@ -513,4 +420,33 @@ jQuery(document).on('click', '.comment-likes', function(event) {
 // Call initializeLikeButtons function on document ready
 jQuery(document).ready(function() {
     initializeLikeButtons();
+});
+
+
+
+
+
+$(document).ready(function() {
+    $('#registration-form').on('submit', function(e) {
+        e.preventDefault();
+        var formdata = $(this).serialize(); // Serialize the form data
+
+        $.ajax({
+            type: 'POST',
+            url: '/register/',
+            data: formdata,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = '/email-verification-sent/';
+                } else {
+                    console.error('Registration failed, please check your input');
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.error('An error occurred while processing your request:', errmsg); // Log error message to the console
+                console.error('Error details:', err); // Log error details to the console
+            }
+        });
+    });
 });

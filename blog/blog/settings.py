@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'imagekit',
+    'phonenumber_field',
 
 ]
 
@@ -155,7 +156,9 @@ EMAIL_HOST_PASSWORD = 'nccu inis ihyr ikqo'
 
 #login redirect
 LOGIN_REDIRECT_URL ='/profile'
-LOGIN_URL = 'login'
+LOGIN_URL = '/login/'
+
+
 
 
 DJANGORESIZED_DEFAULT_SIZE = [1000,400]

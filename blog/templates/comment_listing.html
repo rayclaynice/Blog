@@ -54,7 +54,7 @@
                 margin-bottom: 100px
             }
             .buttonload {
-            background-color: rgba(160, 160, 160, 0.075);
+            background-color: rgba(245, 239, 239, 0.075);
             border-radius: 15px; /* Remove borders */
             color: white; /* White text */
             padding: 10px; /* Some padding */
@@ -80,7 +80,7 @@
             }
 
             .modal-content {
-                background-color: #fff;
+                background-color: #006767;
                 border-radius: 4px;
                 box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
                 padding: 20px;
@@ -139,13 +139,20 @@
             }
 
             .comment-widgets .comment-row:hover {
-                background: rgba(0, 0, 0, 0.02);
+                background: #006767;
                 cursor: pointer;
+                width: 750px;
+                border-radius: 10px;
+            }
+            .comment-widgets .date {
+                color:#ffffff;
             }
 
             .comment-widgets .comment-row {
-                border-bottom: 1px solid rgba(120, 130, 140, 0.13);
+                border-bottom: 1px solid rgba(244, 247, 251, 0.13);
+                border-top: 1px solid rgba(244, 247, 251, 0.13);
                 padding: 15px;
+                width: 750px;
             }
 
             .comment-text:hover{
@@ -229,6 +236,7 @@
                             
                                 </span>
                             </div>
+                            <br>
                             <p class="m-b-5 m-t-10"> {{comment.c_ment}}</p>
                             
                             <div class="custom-confirm" data-comment-id="{{ comment.id }}" style="display: none;">

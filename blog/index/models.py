@@ -47,6 +47,31 @@ class Comments(models.Model):
         return f"Comment by {self.author.username} on {self.created_at}: {self.c_ment}"
     
 
+
+class Reply(models.Model):
+    replies = models.ForeignKey(Comments, on_delete = models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    reply_text = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+    reply_count =models.IntegerField(default=0)
+
+
+    def time_since_created(self):
+        return timesince(self.created_at)
+    
+
+
+    def __str__(self):
+        return f"reply by {self.author.username} on {self.created_at}"
+
+
+
+
+
+
+
+    
+
 class Like(models.Model):
     post = models.ForeignKey(Article, related_name='likes', on_delete=models.CASCADE, default =1)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -85,3 +110,27 @@ class comment_likes(models.Model):
     @property
     def total_likes(self):
         return self.comments_likes.count()
+    
+
+
+
+
+class reply_likes(models.Model):
+    reply = models.ForeignKey(Reply, related_name='reply_likes', on_delete=models.CASCADE, default =1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.reply.likes_count = self.reply.reply_likes.count()
+        self.reply.save()
+
+    def delete(self, *args, **kwargs):
+        reply = self.reply
+        super().delete(*args, **kwargs)
+        reply.likes_count = reply.likes.count()
+        reply.save()
+
+    @property
+    def total_likes(self):
+        return self.reply_likes.count()
+    

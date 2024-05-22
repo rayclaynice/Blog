@@ -28,6 +28,7 @@ urlpatterns= [
     path('get_comment_count/<int:pk>/', views.get_comment_count, name='get_comment_count'),
     path('get_comments/<int:pk>/', views.comment_view, name='article_comment'),
     path('update_comments/<int:pk>/', views.update_comments, name='update_comments'),
+    path('update_replies/<int:pk>/', views.reply_view, name='reply_comments'),
     path('delete_comments/<int:pk>/', views.delete_comments, name='delete_comments'),
 
    # path('update-like-count/', views.save_like, name='update-like-count'),
