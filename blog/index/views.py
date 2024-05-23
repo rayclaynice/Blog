@@ -290,7 +290,7 @@ def update_comments(request, pk):
             'author': comment.author.username,
             'author_image_url': comment.author.profile.image.url,
             'c_ment': comment.c_ment,
-            'created_at': timesince(comment.created_at),  # Format created_at as needed
+            'created_at': comment.get_date(), 
             'comment_likes_count': comment.comment_likes.count(),
         }
         comments_data.append(comment_data)

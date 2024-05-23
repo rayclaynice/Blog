@@ -21,6 +21,31 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
+//function to toggle replies section
+document.addEventListener("DOMContentLoaded", function() {
+    var commentIcons = document.querySelectorAll(".toggle-replies");
+
+    commentIcons.forEach(function(commentIcon) {
+        commentIcon.addEventListener("click", function(event) {
+            event.preventDefault();
+            var commentSection = this.closest(".post").querySelector(".comment-section");
+            if (commentSection.style.display === "none") {
+                commentSection.style.display = "block";
+
+                // Use jQuery to get the articleId
+                //var articleId = $(this).closest('.comments-section').data('article-id');
+                var articleId = this.dataset.articleId;
+                
+                console.log("Article ID:", articleId);
+
+            } else {
+                commentSection.style.display = "none";
+            }
+        });
+    });
+});
+
+
 
 
 
@@ -47,19 +72,22 @@ function updateComments(articleId, currentPage = 1, totalPages = 1) {
                 </div>
                 <div class="comment-text w-100">
                     <h5>${comment.author}</h5>
+                    <p class="m-b-5 m-t-10">${comment.c_ment}</p>
                     <div class="comment-footer">
                         <span class="date">${comment.created_at}</span>
-                        <span class="label label-info">Updated</span>
                         <span class="action-icons">
-                            <a href="#" data-abc="true"><i class="fa fa-rotate-right"></i></a>
+                        ${showDeleteAction ? `<a href="#" class="delete-comment" data-comment-id="${comment.id}"><i class="fa fa-trash trash-icon"></i></a>` : ''}
                             <a href="#" class="comment-likes" data-comment-id="${comment.id}">
                                 <i class="fas fa-heart like-icon"></i> 
                                 <span class="like-icons">${comment.comment_likes_count}</span> 
                             </a>
-                            ${showDeleteAction ? `<a href="#" class="delete-comment" data-comment-id="${comment.id}"><i class="fa fa-trash trash-icon"></i></a>` : ''}
+                            <a href="#" class="icon solid toggle-replies" data-article-id="{{ article.id }}">
+                            <i class="fas fa-comment"></i>
+                            <span class="comment-count">5</span>
+                        </a>
                         </span>
                     </div>
-                    <p class="m-b-5 m-t-10">${comment.c_ment}</p>
+                    
                     <div class="custom-confirm" data-comment-id="${comment.id}" style="display: none;">
                         <div class="modal-content">
                             <p><strong>Delete</strong><br>Are you sure that you want to delete this comment?</p>
@@ -182,6 +210,7 @@ jQuery(document).ready(function() {
                 },
                 success: function(response) {
                     $clickedComment.remove();
+                    $confirmationDialog.hide();
                     for (var i = currentPage; i <= totalPages; i++) {
                         updateComments(articleId, i, totalPages);
                     }

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import datetime, timedelta
 from django.utils.timesince import timesince
 from django.contrib.auth.models import User
 from PIL import Image
@@ -7,6 +8,7 @@ from django.urls import reverse
 from django_resized import ResizedImageField
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
+from django.contrib.humanize.templatetags import humanize
 
 # Create your models here
 class Article(models.Model):
@@ -39,9 +41,22 @@ class Comments(models.Model):
     comment_likes_count = models.IntegerField(default=0) 
 
 
-    def time_since_created(self):
-        return timesince(self.created_at)
+    def get_date(self):
+        now = timezone.now()
+        time_difference = now - self.created_at
 
+        if time_difference < timedelta(days=1):
+            hours = time_difference.seconds // 3600
+            return f"{hours} hour{'s' if hours != 1 else ''} ago"
+        elif time_difference < timedelta(weeks=1):
+            days = time_difference.days
+            return f"{days} day{'s' if days != 1 else ''} ago"
+        elif time_difference < timedelta(days=30):
+            weeks = time_difference.days // 7
+            return f"{weeks} week{'s' if weeks != 1 else ''} ago"
+        else:
+            months = time_difference.days // 30
+            return f"{months} month{'s' if months != 1 else ''} ago"
 
     def __str__(self):
         return f"Comment by {self.author.username} on {self.created_at}: {self.c_ment}"

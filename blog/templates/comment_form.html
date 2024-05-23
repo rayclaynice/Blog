@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article Detail</title>
     <style>
+        .comment-section{
+            position: relative;
+            overflow-y: auto;
+            max-height: 700px;
+            
+        }
+        .comment-section::-webkit-scrollbar{
+            width:10px;
+            background-color: transparent;
+        }
         .comment {
             margin-bottom: 20px;
             border-bottom: 1px solid #ccc;
