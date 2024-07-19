@@ -23,6 +23,25 @@ class Article(models.Model):
     comment_count = models.IntegerField(default=0) 
 
 
+
+
+    def get_date(self):
+        now = timezone.now()
+        time_difference = now - self.date_posted
+
+        if time_difference < timedelta(days=1):
+            hours = time_difference.seconds // 3600
+            return f"{hours} hour{'s' if hours != 1 else ''} ago"
+        elif time_difference < timedelta(weeks=1):
+            days = time_difference.days
+            return f"{days} day{'s' if days != 1 else ''} ago"
+        elif time_difference < timedelta(days=30):
+            weeks = time_difference.days // 7
+            return f"{weeks} week{'s' if weeks != 1 else ''} ago"
+        else:
+            months = time_difference.days // 30
+            return f"{months} month{'s' if months != 1 else ''} ago"
+
     def __str__(self):
         return self.title
 
@@ -64,16 +83,32 @@ class Comments(models.Model):
 
 
 class Reply(models.Model):
-    replies = models.ForeignKey(Comments, on_delete = models.CASCADE)
+    replies = models.ForeignKey(Comments, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     reply_text = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     reply_count =models.IntegerField(default=0)
 
 
-    def time_since_created(self):
-        return timesince(self.created_at)
-    
+    def get_date(self):
+        now = timezone.now()
+        time_difference = now - self.created_at
+
+        if time_difference < timedelta(days=1):
+            hours = time_difference.seconds // 3600
+            return f"{hours} hour{'s' if hours != 1 else ''} ago"
+        elif time_difference < timedelta(weeks=1):
+            days = time_difference.days
+            return f"{days} day{'s' if days != 1 else ''} ago"
+        elif time_difference < timedelta(days=30):
+            weeks = time_difference.days // 7
+            return f"{weeks} week{'s' if weeks != 1 else ''} ago"
+        else:
+            months = time_difference.days // 30
+            return f"{months} month{'s' if months != 1 else ''} ago"
+
+    def __str__(self):
+        return f"Comment by {self.author.username} on {self.created_at}: {self.reply_text}"
 
 
     def __str__(self):

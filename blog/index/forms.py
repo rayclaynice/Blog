@@ -1,5 +1,6 @@
 from django import forms
 from .models import Comments, Reply
+from django.utils.safestring import mark_safe
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -14,9 +15,10 @@ class CommentForm(forms.ModelForm):
 class ReplyForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         comment_author_username = kwargs.pop('comment_author_username', None)
+        print("Comment Author Username:", comment_author_username)
         super().__init__(*args, **kwargs)
         if comment_author_username:
-            self.fields['reply_text'].initial = f'Replying to {comment_author_username}: '
+            self.comment_author_username = comment_author_username
 
     reply_text = forms.CharField(
         widget=forms.Textarea(attrs={'maxlength': 200, 'required': True}),
@@ -28,7 +30,8 @@ class ReplyForm(forms.ModelForm):
 
     def clean_reply_text(self):
         reply_text = self.cleaned_data.get('reply_text')
-        # No need to prepend @username here since it's handled in the initial value
-        comment_author_username = self.instance.replies.author.username
-        reply_text = f"@{comment_author_username} {reply_text}"
+        if self.comment_author_username:
+            # Format the username and append it to the reply text
+            styled_username = mark_safe(f"<strong><span style='color: green;'>@{self.comment_author_username}</span></strong>")
+            reply_text = f"{styled_username} {reply_text}"
         return reply_text

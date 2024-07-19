@@ -3,18 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Article Detail</title>
+    <title>Comment Section</title>
     <style>
-        .comment-section{
+        .comment-section {
             position: relative;
             overflow-y: auto;
-            max-height: 700px;
+            height: 800px;
+            border: 1px solid #008080;
+            padding: 10px;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            border-radius: 20px;
+            
             
         }
-        .comment-section::-webkit-scrollbar{
-            width:10px;
+
+        .comment-section::-webkit-scrollbar {
+            width: 10px;
             background-color: transparent;
         }
+
         .comment {
             margin-bottom: 20px;
             border-bottom: 1px solid #ccc;
@@ -22,41 +31,113 @@
             display: flex;
             align-items: flex-start;
         }
+
         .comment .author {
             font-weight: bold;
             margin-right: 10px;
         }
+
         .comment .author img {
-            width: 50px; /* Adjust the size of the author image */
-            height: 50px; /* Adjust the size of the author image */
-            border-radius: 50%; /* Make the author image round */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
         }
+
         .comment .comment-text {
             flex: 1;
         }
+
         .comment .date {
             color: #666;
             font-size: 0.8em;
         }
+
         #id_image {
             margin-bottom: 10px;
+        }
+
+        .comment-textarea {
+            border: 1px solid #008080;
+            border-radius: 20px;
+            padding: 10px;
+            width: 900px;
+            margin-bottom: 10px;
+            resize: none;
+            overflow: hidden;
+            box-sizing: border-box;
+            font: inherit; /* Ensuring identical styling with the pseudo-element */
+            }
+
+            .comment-form .form-controls textarea {
+            flex: 1;
+            margin-bottom: 10px;
+            }
+
+            .grow-wraps {
+            display: grid;
+            }
+
+            .grow-wraps::after {
+            content: attr(data-replicated-value) " ";
+            white-space: pre-wrap;
+            visibility: hidden;
+            }
+
+            .grow-wraps > textarea,
+            .grow-wraps::after {
+            border: 1px solid #008080;
+            border-radius: 20px;
+            padding: 10px;
+            width: 750px;
+            box-sizing: border-box;
+            font: inherit;
+            grid-area: 1 / 1 / 2 / 2;
+            }
+
+        .comment-form {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .comment-form img {
+            margin-right: 10px;
+        }
+
+        .comment-form .form-controls {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .comment-form .form-controls textarea {
+            flex: 1;
+            margin-bottom: 10px;
+        }
+
+        .comment-form .form-controls input[type="submit"] {
+            align-self: flex-start;
+            margin-top: 20px;
+            border-radius: 20px;
         }
     </style>
 </head>
 <body>
-    
     <div class="comment-section" style="display: none;">
         <h3>Leave a Comment</h3>
         <form class="comment-form" method="post" action="{% url 'article_comment' article.id %}">
             {% csrf_token %}
-            {{form.as_p}}
-            <textarea  name="c_ment" rows="3" cols="20" required></textarea><br>
-            <input type="submit" value="comment" class="button primary small">
+            {{ form.as_p }}
+            
+            <img src="{{ user.profile.image.url }}" style="width: 50px; height: 50px; border-radius: 50%;" alt="user">
+            
+            <div class="form-controls">
+                <div class="grow-wraps">
+                  <textarea name="c_ment" rows="1" cols="20" placeholder="Leave a comment for {{ article.author.username }}" class="comment-textarea" required onInput="this.parentNode.dataset.replicatedValue = this.value"></textarea>
+                </div>
+                <input type="submit" value="Comment" class="button primary small">
+              </div>
         </form>
         {% include 'comment_listing.html' %}
-        
     </div>
-    
-    
 </body>
 </html>

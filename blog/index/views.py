@@ -28,6 +28,7 @@ from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         UserPassesTestMixin,
                                         )
 from django.utils.timesince import timesince
+from django.db.models import Q
 
 
 
@@ -187,6 +188,33 @@ def comment_view(request, pk):
 
 
 
+
+@login_required_ajax
+def reply_view(request, pk):
+    comment = get_object_or_404(Comments, pk=pk)
+    replies = Reply.objects.filter(replies=comment).order_by('created_at')
+
+    if request.method == 'POST':
+        form = ReplyForm(request.POST, comment_author_username=comment.author.username)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.replies = comment
+            if isinstance(request.user, User):
+                reply.author = request.user  # Corrected assignment
+            else:
+                reply.author = None  # Or handle as per your application logic
+            reply.save()
+            return JsonResponse({'success': True, 'message': 'Reply submitted successfully'})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
+
+
+
+
         
 @login_required_ajax
 def like_post(request, pk):
@@ -270,6 +298,8 @@ def update_comments(request, pk):
     # Retrieve the article instance using its primary key (pk)
     article = get_object_or_404(Article, pk=pk)
     comments = Comments.objects.filter(post=article).order_by('-created_at')
+    
+
 
     paginator = Paginator(comments, 3)
     page_number = request.GET.get('page')
@@ -285,51 +315,61 @@ def update_comments(request, pk):
         
     comments_data = []
     for comment in comments:
+        form_action_url = reverse('comments_replies', args=[comment.id])
+        replies = Reply.objects.filter(replies=comment).order_by('-created_at')
+        replies_data = []
+        for reply in replies:
+            reply_data={
+                'id': reply.pk,
+                'author':reply.author.username,
+                'author_image_url':reply.author.profile.image.url,
+                'reply_text': reply.reply_text,
+                'created_at':reply.get_date(),
+            }
+            replies_data.append(reply_data)
+
+
         comment_data = {
             'id': comment.pk,
             'author': comment.author.username,
             'author_image_url': comment.author.profile.image.url,
             'c_ment': comment.c_ment,
-            'created_at': comment.get_date(), 
+            'created_at': comment.get_date(),
             'comment_likes_count': comment.comment_likes.count(),
         }
         comments_data.append(comment_data)
+
+
+   
 
     current_user_data = None
     if request.user.is_authenticated:
         current_user_data = {
             'id': request.user.id,
             'username': request.user.username,
+            'user_image': request.user.profile.image.url,
         }
 
     return JsonResponse({
         'article': {'author_username': article.author.username,},
         'current_user': current_user_data, 
+        'reply':replies_data,
         'comments': comments_data,
         'has_next': comments.has_next(),
         'has_previous': comments.has_previous(),
         'page_number': comments.number,
         'num_pages': paginator.num_pages,
+        'form_action_url': form_action_url,
 
     })
 
 
 
 
-@login_required
-def reply_view(request, comment_id):
-    comment = get_object_or_404(Comments, pk=comment_id)
-    replies = Reply.objects.filter(replies=comment).order_by('created_at')
-
-    # Handling reply submission
-    if request.method == 'POST':
-        form = ReplyForm(request.POST)
-        if form.is_valid():
-            reply = form.save(commit=False)
-            reply.replies = comment
-            reply.user = request.user
-            reply.save()
-            return JsonResponse({'success': True, 'message': 'Reply submitted successfully'}) 
+@login_required_ajax
+def update_replies(request, pk):
+    comment = get_object_or_404(Comments, pk=pk)
+    replies = Reply.objects.filter(replies=comment).order_by('-created_at')
 
     # Handling reply retrieval and pagination
     paginator = Paginator(replies, 3)  
@@ -346,24 +386,39 @@ def reply_view(request, comment_id):
     for reply in replies:
         reply_data = {
             'id': reply.pk,
-            'author': reply.user.username,
+            'author': reply.author.username,
             'reply_text': reply.reply_text,
-            'created_at': timesince(reply.created_at.strftime('%Y-%m-%d %H:%M:%S')),  
-            # Add any other fields you want to include
+            'author_image_url': reply.author.profile.image.url,
+            'created_at': reply.get_date(), 
         }
         replies_data.append(reply_data)
 
+    comment_data = {
+        'id': comment.pk,
+        'author': comment.author.username,
+        'author_image_url': comment.author.profile.image.url,
+        'c_ment': comment.c_ment,
+        'created_at': comment.get_date(),
+        'comment_likes_count': comment.comment_likes.count(),
+    }
+
+    current_user_data = None
+    if request.user.is_authenticated:
+        current_user_data = {
+            'id': request.user.id,
+            'username': request.user.username,
+            'user_image': request.user.profile.image.url,
+        }
+
     return JsonResponse({
+        'comment': comment_data,
         'replies': replies_data,
         'has_next': replies.has_next(),
         'has_previous': replies.has_previous(),
         'page_number': replies.number,
         'num_pages': paginator.num_pages,
+        'current_user': current_user_data, 
     })
-
-
-
-
 
 
 
@@ -381,3 +436,101 @@ def delete_comments(request, pk):
     else:
         return JsonResponse({'message': 'You are not authorized to delete this comment'}, status=403)
     
+
+'''
+def search_query(request):
+    articles = Article.objects.all()
+    search_query = request.GET.get('q', '')
+    
+    if search_query:
+        searches = Article.objects.filter(
+            Q(title__icontains=search_query) |
+            Q(sub_title__icontains=search_query) |
+            Q(preview__icontains=search_query) |
+            Q(content__icontains=search_query)
+        )
+    else:
+        searches = Article.objects.none()
+
+    return render(request, 'search_result.html', {'searches': searches, 'articles': articles, 'search_query': search_query})
+
+'''
+
+
+
+
+
+
+def search(request):
+    articles = Article.objects.all().order_by('-date_posted')
+
+    paginator = Paginator(articles, 3)
+    page_number = request.GET.get('page')
+    
+    try:
+        articles = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        articles = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        articles = paginator.page(paginator.num_pages)
+
+    context = {
+        'articles': articles,
+        'paginator': paginator,
+        'page_obj': articles,  # This is the current page of articles
+        'is_paginated': articles.has_other_pages(),
+    }
+   
+
+    
+    return render(request, 'search_result.html', context)
+
+
+
+def search_results(request):
+    search_query = request.GET.get('q', '')
+    
+    if search_query:
+        searches = Article.objects.filter(
+            Q(title__icontains=search_query) |
+            Q(sub_title__icontains=search_query) |
+            Q(preview__icontains=search_query) |
+            Q(content__icontains=search_query)).select_related('author__profile') #search related is used because query on foregieng key isnt allowed with icontain
+    else:
+        searches = Article.objects.none()
+
+    results = []
+    for search in searches:
+        results.append({
+            'title': search.title,
+            'preview': search.preview,
+            'content': search.content,
+            'sub_title': search.sub_title,
+            'author': {
+                'username': search.author.username,
+                'profile': {
+                    'image': {
+                        'url': search.author.profile.image.url
+                    }
+                }
+            }
+        })
+
+
+    articles_data = []
+    articles = Article.objects.all()
+    for item in articles:
+        articles_data.append({
+            'author': item.author.username,
+            'author_image_url': item.author.profile.image.url,
+            'created_at': item.get_date(),
+        })
+   
+
+    return JsonResponse({
+        'searches': results,
+        'articles': articles_data,
+        'search_query': search_query
+    })

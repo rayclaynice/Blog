@@ -1,0 +1,464 @@
+
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+
+<style>
+
+			
+		.form-container {
+			width: 500px;
+			height:1500px;
+			margin-left: 10px;
+		}
+		.btn_update {
+			display: inline-block;
+			width: 150px;
+			height: 50px;
+			margin-right: 10px; /* Adjust margin between buttons */
+			border: 1px solid #e4dadb; /* Border color set to danger */
+			font-weight: bold;
+			padding: 0.25rem 0.5rem; /* Padding adjusted */
+			font-size: 0.8rem;
+			line-height: 1.5;
+			border-radius: 0.25rem;
+		}
+		.btn {
+			display: inline-block;
+			font-weight: bold;
+			color: #dc3545; /* Text color set to danger */
+			text-align: center;
+			vertical-align: middle;
+			user-select: none;
+			background-color: transparent; /* Transparent background */
+			border: 1px solid #e4dadb; /* Border color set to danger */
+			padding: 0.25rem 0.5rem; /* Padding adjusted */
+			font-size: 0.8rem;
+			line-height: 1.5;
+			border-radius: 0.25rem;
+			transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+			cursor: pointer;
+			text-decoration: none;
+		}
+
+		.btn:hover {
+			color: #fff;
+			background-color: #dc3545; /* Background color on hover set to danger */
+			border-color: #bd2130; /* Border color on hover set to danger */
+			text-decoration: none;
+		}
+
+		.btn:focus {
+			outline: 0;
+			box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);
+		}
+
+		.btn:active {
+			color: #fff;
+			background-color: #bd2130; /* Background color on active set to danger */
+			border-color: #b21f2d; /* Border color on active set to danger */
+		}
+		h3.view_posts {
+			font-weight: bold;
+			font-size: small;
+
+
+		}
+		.custom-heart {
+			background-color: gray; /* Set the background color */
+			padding: 0.2em; /* Adjust padding to control the size of the background */
+			border-radius: 50%; /* Make the background circular */
+			color: white; /* Set the color of the heart icon to white */
+	}
+
+		
+		.like-button.liked i.fa-heart {
+        color: red; 
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+.widget-26 {
+  color: inherit;
+  font-weight: 400;
+}
+
+.widget-26 tr:first-child td {
+  border: 0;
+ 
+}
+
+.widget-26 .widget-26-job-emp-img img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.widget-26 .widget-26-job-title {
+  min-width: 200px;
+}
+
+.widget-26 .widget-26-job-title a {
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: white;
+  line-height: 1.5;
+}
+
+.widget-26 .widget-26-job-title a:hover {
+  color: #68CBD7;
+  text-decoration: none;
+}
+
+.widget-26 .widget-26-job-title .employer-name {
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 400;
+  color: white;
+  font-size: 0.8125rem;
+}
+
+.widget-26 .widget-26-job-title .employer-name:hover {
+  color: #68CBD7;
+  text-decoration: none;
+}
+
+.widget-26 .widget-26-job-title .time {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.widget-26 .widget-26-job-info {
+  min-width: 100px;
+  font-weight: 400;
+}
+
+.widget-26 .widget-26-job-info p {
+  line-height: 1.5;
+  color: white;
+  font-size: 0.8125rem;
+}
+
+.widget-26 .widget-26-job-info .location {
+  color: white;
+}
+
+
+.widget-26 .widget-26-job-category span {
+  font-size: 0.8125rem;
+  color: #3c4142;
+  font-weight: 600;
+}
+
+.widget-26 .widget-26-job-starred svg {
+  width: 20px;
+  height: 20px;
+  color: #fd8b2c;
+}
+
+.widget-26 .widget-26-job-starred svg.starred {
+  fill: #fd8b2c;
+}
+.bg-soft-base {
+  background-color: #e1f5f7;
+}
+.bg-soft-warning {
+    background-color: #fff4e1;
+}
+.bg-soft-success {
+    background-color: #d1f6f2;
+}
+.bg-soft-danger {
+    background-color: #fedce0;
+}
+.bg-soft-info {
+    background-color: #d7efff;
+}
+
+
+
+
+.search-body {
+  margin-bottom: 1.5rem;
+
+}
+
+.search-body .search-filters .filter-list {
+  margin-bottom: 1.3rem;
+}
+
+.search-body .search-filters .filter-list .title {
+  color: #3c4142;
+  margin-bottom: 1rem;
+}
+
+.search-body .search-filters .filter-list .filter-text {
+  color: #727686;
+}
+
+.search-body .search-result .result-header {
+  margin-bottom: 2rem;
+}
+
+.search-body .search-result .result-header .records {
+  color: #3c4142;
+}
+
+.search-body .search-result .result-header .result-actions {
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-body .search-result .result-header .result-actions .result-sorting {
+  display: flex;
+  align-items: center;
+}
+
+.search-body .search-result .result-header .result-actions .result-sorting span {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+}
+
+.search-body .search-result .result-header .result-actions .result-sorting select {
+  color: #68CBD7;
+}
+
+.search-body .search-result .result-header .result-actions .result-sorting select option {
+  color: #3c4142;
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .search-body .search-filters {
+    display: flex;
+  }
+  .search-body .search-filters .filter-list {
+    margin-right: 1rem;
+  }
+}
+
+.card-margin {
+    margin-bottom: 1.875rem;
+}
+
+@media (min-width: 992px){
+.col-lg-2 {
+    flex: 0 0 16.66667%;
+    max-width: 16.66667%;
+}
+}
+
+.card-margin {
+    margin-bottom: 1.875rem;
+}
+        .card {
+            border: 0;
+            box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+            -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+            -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+            -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+        }
+        .card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color:inherit;
+            background-clip: border-box;
+            border: 1px solid inherit;
+            border-radius: 8px;
+            width:700px;
+        }
+        .table-responsive {
+            width: 100%;  /* Set the container width to 100% */
+        }
+        .table {
+            width: 100%;  /* Set the table width to 100% */
+        }
+        .table:hover {
+         color: white;
+        }
+
+        .highlight {
+            color: yellow;
+            font-weight: bold;
+        }
+        .text-center {
+        color: white;
+        }
+
+
+</style>
+
+
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+					<div id="main">
+            <div id="search-query" data-query="{{ search_query }}"></div>
+
+<div class="container">
+    <div class="row">
+            <div class="col-12">
+                <div class="card card-margin">
+                    <div class="card-body">
+                        <div class="row search-body">
+                            <div class="col-lg-12">
+                                <div class="search-result">
+                                    <div class="result-header">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="result-actions">
+                                                
+                                                    <div class="result-views">
+                                                        
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="result-body">
+                                        <div class="table-responsive">
+                                            <table class="table widget-26">
+                                                <tbody>
+                                                    {% if searches %}
+                                                    {% for item in searches %}
+                                                   
+                                                    <tr>
+                                                        <td>
+                                                            <div class="widget-26-job-emp-img">
+                                                                <img src="{{ item.author.profile.image.url }}" alt="Company" />
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="widget-26-job-title">
+                                                                <a href="#" class="search-highlight">{{ item.title }}</a>
+                                                                <p class="m-0"><a href="#" class="employer-name search-highlight">{{ item.author.username }}</a></p>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="widget-26-job-info">
+                                                                <p class="type m-0 search-highlight">{{ item.preview }}</p>
+                                                                <p class="text-muted m-0">about  <span class="location">2 days ago</span></p>
+                                                            </div>
+                                                        </td>
+                                        
+                                                    </tr>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <tr><td colspan="3"><p>No results found.</p></td></tr>
+                                                
+                                                    {% endif %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  		</div>
+				<!-- Sidebar -->
+					<section id="sidebar">
+						<!-- Intro -->
+							<section id="intro">
+								<a href="#" class="logo"><img src="{% static 'images/aliens.jpg' %}" alt="" /></a>
+								<header>
+									<h2><a href="">COSMIC HUBOSPHERE</a></h2>
+									
+									<p>Your Portal to the  boundless realms of celestial exploration and artificial intelligence intergration. <a href="http://html5up.net"></a></p>
+								</header>
+							</section>
+
+						<!-- Mini Posts -->
+							<section>
+								<div class="mini-posts">
+
+									<!-- Mini Post -->
+									{% for mini_post in articles %}
+										<article class="mini-post">
+											
+											<header>
+												<h4><a href="single.html">{{ mini_post.title}}</a></h4>
+												<time class="published" datetime="2015-10-20">{{mini_post.date_posted|date:"F d, Y"}}</time>
+												<a href="#" class="author"><img src="{{mini_post.author.profile.image.url}}" alt="" style="width: 45px; height: 45px; border-radius: 50%;"/></a>
+											</header>
+											<a href="single.html" class="image"><img src="{{ mini_post.image.url}}" alt="" /></a>
+											{% endfor %}
+										</article>
+
+								</div>
+							</section>
+
+						<!-- Posts List -->
+							<section>
+								<ul class="posts">
+									{% for list in articles %}
+									<li>
+										<article>
+											<header>
+												<h3><a href="">{{list.title}}</a></h3>
+												<time class="published" datetime="2015-10-20">{{list.date_posted|date:"F d, Y"}}</time>
+											</header>
+											<a href="single.html" class="image"><img src="{{ list.image.url}}" alt="" /></a>
+										</article>
+										{% endfor %}
+									</li>
+									
+								</ul>
+							</section>
+
+						<!-- About -->
+							<section class="blurb">
+								<h2>About</h2>
+								<p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod amet placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at phasellus sed ultricies.</p>
+								<ul class="actions">
+									<li><a href="#" class="button">Learn More</a></li>
+								</ul>
+							</section>
+
+						<!-- Footer -->
+							<section id="footer">
+								<ul class="icons">
+									<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+									<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+									<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+									<li><a href="#" class="icon solid fa-rss"><span class="label">RSS</span></a></li>
+									<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+								</ul>
+								<p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>. Images: <a href="http://unsplash.com">Unsplash</a>.</p>
+							</section>
+
+					</section>
+					
+			</div>
+    
+			
+</body>
+{% endblock %}
+
+
+
+
+
+

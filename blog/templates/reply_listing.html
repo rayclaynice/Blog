@@ -63,6 +63,7 @@
             display: flex; /* Use flexbox */
             justify-content: center; /* Center horizontally */
             align-items: center; /* Center vertically */
+            margin-bottom: 20px;
             }
             .buttonload i.fa-spinner {
             font-size: 20px; /* Set a larger font size for the spinner icon */
@@ -136,27 +137,32 @@
             .card-body {
                 -ms-flex: 1 1 auto;
                 flex: 1 1 auto;
-                padding: 1.25rem
+                padding: 1.25rem;
+                
             }
 
-            .comment-widgets .comment-row:hover {
-                background: #006767;
+            .reply-widgets .reply-row:hover {
+                background: #002223;
                 cursor: pointer;
-                width: 750px;
-                border-radius: 10px;
+                width: 700px;
+                border-radius: 15px;
             }
-            .comment-widgets .date {
+            .reply-widgets .date {
                 color:#ffffff;
             }
 
-            .comment-widgets .comment-row {
-                border-bottom: 1px solid rgba(244, 247, 251, 0.13);
-                border-top: 1px solid rgba(244, 247, 251, 0.13);
-                padding: 15px;
-                width: 750px;
+            .reply-widgets .reply-row {
+                border-top: 1px solid #008080;
+                border-bottom: 1px solid #008080;
+                border-right: 1px solid #008080;
+                border-left: 1px solid #008080;
+                padding: 10px;
+                margin-top: 10px;
+                width: 700px;
+                border-radius: 15px;
             }
 
-            .comment-text:hover{
+            .reply-text:hover{
                 visibility: visible;
             }
 
@@ -185,13 +191,13 @@
                 background-color: #ef5350;
             }
 
-            .action-icons a {
+            .reply-action-icons a {
                 padding-left: 7px;
                 vertical-align: middle;
                 color: #99abb4;
             }
 
-            .action-icons a:hover {
+            .reply-action-icons a:hover {
                 color: #1976d2;
             }
 
@@ -203,94 +209,146 @@
                 margin-bottom: 100px
             }
             
-            .action-icons{
-                margin-left: 480px;
+            .reply-action-icons{
+                margin-left: 440px;
             }
+            .reply-textarea{
+            border: 1px solid #008080;
+            border-radius: 20px;
+            padding: 10px;
+            width: 700px;
+            margin-bottom: 10px;
+            resize: none;
+            overflow: hidden;
+            box-sizing: border-box;
+            font: inherit; /* Ensuring identical styling with the pseudo-element */
+            }
+
+            .reply-form .form-controls textarea {
+            flex: 1;
+            margin-bottom: 10px;
+            }
+
+            .grow-wrap {
+            display: grid;
+            }
+
+            .grow-wrap::after {
+            content: attr(data-replicated-value) " ";
+            white-space: pre-wrap;
+            visibility: hidden;
+            }
+
+            .grow-wrap > textarea,
+            .grow-wrap::after {
+            border: 1px solid #008080;
+            border-radius: 20px;
+            padding: 10px;
+            width: 620px;
+            box-sizing: border-box;
+            font: inherit;
+            grid-area: 1 / 1 / 2 / 2;
+            }
+
+        .reply-form {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .reply-form img {
+            margin-right: 10px;
+        }
+
+        .reply-form .form-controls {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .reply-form .form-controls textarea {
+            flex: 1;
+            margin-bottom: 10px;
+        }
+
+        .reply-form .form-controls input[type="submit"] {
+            align-self: flex-start;
+            margin-top: 20px;
+            border-radius: 20px;
+        }
+        .replies-section{
+            margin-left: 50px;
+            padding: 20px;
+            border: 15px;
+            border-radius: 10px;
+            border:1px solid #008080;
+            height:1200px;
             
+           
+        }
+        .replies-section:hover{
+            background: inherit;
+        }
+        .reply-form  input[type="submit"] {
+            align-self: flex-start;
+            margin-top: 20px;
+            border-radius: 20px;
+        }
 
-
-    </style>
-</head>
-<body>            
-    
-    <div class="container d-flex justify-content-center mt-100 mb-100">
-      <div class="row">
-          <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title">Replies</h6>
-                 </div>
-                
-                <div class="comment-widgets m-b-20" data-article-id="{{ article.id }}">
-                    {% for comment in article.article_comments %}
-                    <div class="d-flex flex-row comment-row">  
-                        <div class="p-2"><span class="round"><img src="{{comment.author.profile.image.url}}" style="width: 45px; height: 45px; border-radius: 50%;" alt="user" width="50"></span></div>
-                        <div class="comment-text w-100">
-                            <h5>{{ comment.author }}</h5>
-                            <p class="m-b-5 m-t-10"> {{comment.c_ment}}</p>
-                            <div class="comment-footer">
-                                <span class="date">{{comment.created_at|timesince}} ago</span>
-                                 <span class="action-icons">
-                                    {% if comment.author == user %}
-                                            <a href="#" class="delete-comment" data-comment-id="{{ comment.id }}"><i class="fa fa-trash trash-icon"></i></a> 
-                                    {% endif %}
-                                        
-                                        <a href="#" class="comment-likes" data-comment-id="{{ comment.id }}">
-                                            <i class="fas fa-heart like-icon"></i> 
-                                            <span class="like-icons">{{ comment.comment_likes.count }}</span> 
-                                        </a>
-                                        <a href="#" class="icon solid toggle-replies" data-article-id="{{ article.id }}">
-											<i class="fas fa-comment"></i>
-											<span class="comment-count">5</span>
-										</a>
-                                            
-                            
-                                </span>
-                            </div>
-                            
-                            <div class="custom-confirm" data-comment-id="{{ comment.id }}" style="display: none;">
-                                <div class="modal-content">
-                                    <p><strong>Delete</strong><br>Are you sure that you want to delete this comment?</p>
-                                    <div class="buttons">
-                                        <button class="confirm-delete">Delete</button>
-                                        <button class="cancel-delete">Cancel</button>
+    </style>               
+            <div class="container d-flex justify-content-center mt-100 mb-100">
+                <div class="row">
+                    <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                        </div>
+                        <div class="reply-widgets m-b-20"  data-comment-id="{{ comment.id }}">
+                            {% for reply in replies %}
+                            <div class="d-flex flex-row reply-row" data-reply-id="{{reply.id}}">  
+                                <div class="p-2"><span class="round"><img src="{{reply.author_image_url}}" style="width: 45px; height: 45px; border-radius: 50%;" alt="user" width="50"></span></div>
+                                <div class="reply-text w-100">
+                                    <h5>{{reply.author}}</h5>
+                                    <p class="m-b-5 m-t-10"> {{reply.reply_text}}</p>
+                                    <div class="reply-footer">
+                                        <span class="date">{{reply.created_at}}</span>
+                                        <span class="reply-action-icons">
+                                            {% if comment.author == user %}
+                                                    <a href="#" class="delete-comment" data-reply-id="{{ reply.id }}"><i class="fa fa-trash trash-icon"></i></a> 
+                                            {% endif %}
+                                                
+                                                <a href="#" class="reply-likes" data-reply-id="{{ reply.id }}">
+                                                    <i class="fas fa-heart like-icon"></i> 
+                                                    <span class="like-icons">123</span> 
+                                                </a>
+                                                <a href="#" class="icon solid toggle-replies" data-article-id="{{ comment.id }}">
+                                                    <i class="fas fa-comment"></i>
+                                                    <span class="reply-count">5</span>
+                                                </a>
+                                        </span>
+                                    
                                     </div>
+                                    <br>
+                                    <!-- remplate to handle delete confirmation-->
+                                    <div class="custom-confirm" data-comment-id="{{ comment.id }}" style="display: none;">
+                                        <div class="modal-content">
+                                            <p><strong>Delete</strong><br>Are you sure that you want to delete this comment?</p>
+                                            <div class="buttons">
+                                                <button class="confirm-delete">Delete</button>
+                                                <button class="cancel-delete">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                 </div>
+                                
+                                
                             </div>
-                            
+                           {% endfor %}
                         </div>
                         
-                       
                     </div>
-                    {% endfor %}
+            
+                    </div>
                 </div>
-               
             </div>
-    
-          </div>
-      </div>
-    </div>
-    
-    {% if article.article_comments.has_other_pages %}
-    <div class="pagination">
-        {% if article.article_comments.has_previous %}
-            <!-- Pagination links -->
-            {% for num in article.article_comments.paginator.page_range %}
-                {% if article.article_comments.number == num %}
-                    <span class="page current">{{ num }}</span>
-                {% else %}
-                    <a href="?article_id={{ article.id }}&page={{ num }}" class="page" data-current-page="{{ num }}">{{ num }}</a>
-                {% endif %}
-            {% endfor %}  
-        {% endif %}
-        {% if article.article_comments.has_next %}
-            <button class="buttonload" data-article-id="{{ article.id }}" data-current-page="{{ article.article_comments.number }}">
-                <i class="fa fa-spinner"></i> Load More
-            </button>
-        {% endif %}
-    </div>
-    {% endif %}      
-    
 
-  </body>
 </html>
